@@ -281,4 +281,16 @@ TOKENIZER_MAP = {
             '<issue_start>',
             '<issue_comment>',
             '<issue_closed>',
-            '<jupyter
+            '<jupyter_start>',
+            '<jupyter_text>',
+            '<jupyter_code>',
+            '<jupyter_output>',
+            '<empty_output>',
+            '<commit_before>',
+            '<commit_msg>',
+            '<commit_after>',
+            '<reponame>',
+        ]
+    )
+}
+
