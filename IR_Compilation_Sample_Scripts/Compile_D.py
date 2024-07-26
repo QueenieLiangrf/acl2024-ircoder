@@ -9,8 +9,8 @@ from multiprocessing import (
 )
 from tqdm import tqdm
 
-root_path = "/kaggle/working/D"    
-out_path = "/kaggle/working/D"
+root_path = "/kaggle/working/input/D"    
+out_path = "/kaggle/working/output/D"
 
 
 def compile_worker(dir_list_chunk):
