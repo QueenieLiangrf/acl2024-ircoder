@@ -4,6 +4,7 @@ import pandas as pd
 import subprocess
 from multiprocessing import Pool, current_process
 from tqdm import tqdm
+import shutil
 import pickle
 
 # Define the paths as required
@@ -26,12 +27,21 @@ def compile_worker(dir_list_chunk):
     with open(out_log_path, "a+") as outfile, open(err_log_path, "a+") as errfile:
         for folder in tqdm(dir_list_chunk, desc=f"Worker - {current_process().pid}: "):
             src_path = os.path.join(root_path, folder, "source.d")  # Adjust source file extension if needed
+            dest_source_path = os.path.join(out_path, folder, "source.d")
             perf_path = os.path.join(out_path, folder, "llvm_O3.ll")
             size_path = os.path.join(out_path, folder, "llvm_OZ.ll")
 
             # Ensure output directories exist
             os.makedirs(os.path.dirname(perf_path), exist_ok=True)
             os.makedirs(os.path.dirname(size_path), exist_ok=True)
+
+            # Copy the source file to the output directory
+            try:
+                shutil.copy(src_path, dest_source_path)
+            except Exception as e:
+                print(f"Error copying source file {src_path} to {dest_source_path}: {e}")
+                result.loc[folder] = [-1, -1]
+                continue
 
             try:
                 # Compile to LLVM IR for performance optimization (-O3)
