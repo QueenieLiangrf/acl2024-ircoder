@@ -1,7 +1,5 @@
 from transformers import AutoTokenizer
 
-# Set your Hugging Face API token
-HF_API_TOKEN = "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"
 
 SAVE_MODULES_MAP = {
     "bigcode/starcoderbase-1b": [
@@ -42,36 +40,49 @@ SAVE_MODULES_MAP = {
     ]
 }
 
+
 LORA_COMPONENTS_MAP = {
     "bigcode/starcoderbase-1b": [
+        #"wte",
+        #"lm_head",
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "iNeil77/starcoderbase-1b-irv-400": [
+        #"wte",
+        #"lm_head",
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "bigcode/astraios-1b-fft": [
+        #"wte",
+        #"lm_head",
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "bigcode/starcoderbase-3b": [
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "iNeil77/starcoderbase-3b-irv-800": [
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "bigcode/starcoderbase-7b": [
         "c_attn",
         "c_proj",
         "q_attn",
+        #"c_fc"
     ],
     "Salesforce/codegen-350M-multi": [
         "qkv_proj",
@@ -86,32 +97,43 @@ LORA_COMPONENTS_MAP = {
         "k_proj",
         "v_proj",
         "o_proj",
+        #"up_proj",
+        #"down_proj"
     ],
     "iNeil77/deepseek-coder-1.3b-base-irf": [
         "q_proj",
         "k_proj",
         "v_proj",
         "o_proj",
+        #"up_proj",
+        #"down_proj"
     ],
     "deepseek-ai/deepseek-coder-5.7bmqa-base": [
         "q_proj",
         "k_proj",
         "v_proj",
         "o_proj",
+        #"up_proj",
+        #"down_proj"
     ],
     "codellama/CodeLlama-7b-hf": [
         "q_proj",
         "k_proj",
         "v_proj",
         "o_proj",
+        #"up_proj",
+        #"down_proj"      
     ],
     "iNeil77/codellama-7b-hf-irv-400": [
         "q_proj",
         "k_proj",
         "v_proj",
         "o_proj",
+        #"up_proj",
+        #"down_proj"      
     ]
 }
+
 
 TOKENIZER_MAP = {
     "bigcode/starcoderbase-1b": AutoTokenizer.from_pretrained(
@@ -119,8 +141,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>'
@@ -131,8 +152,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>'
@@ -143,8 +163,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>'
@@ -155,20 +174,18 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>'
         ]
     ),
     "Salesforce/codegen-350M-multi": AutoTokenizer.from_pretrained(
-        "Salesforce/codegen-350M-multi",
+        "Salesforce/Codegen-350M-multi",
         padding_side="left", 
         truncation_side="right", 
         model_max_length=2048, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>',
@@ -189,12 +206,11 @@ TOKENIZER_MAP = {
         ]
     ),
     "Salesforce/codegen-2B-multi": AutoTokenizer.from_pretrained(
-        "Salesforce/codegen-2B-multi",
+        "Salesforce/Codegen-2B-multi",
         padding_side="left", 
         truncation_side="right", 
         model_max_length=2048, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>',
@@ -219,8 +235,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>',
@@ -245,8 +260,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>',
@@ -271,8 +285,7 @@ TOKENIZER_MAP = {
         padding_side="left", 
         truncation_side="right", 
         model_max_length=4096, 
-        pad_token="", 
-        use_auth_token=HF_API_TOKEN,
+        pad_token="<|pad|>", 
         additional_special_tokens=[
             '<source_to_llvm>', 
             '<llvm_to_source>',
