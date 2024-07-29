@@ -294,4 +294,3 @@ TOKENIZER_MAP = {
     )
 }
 
-Console
