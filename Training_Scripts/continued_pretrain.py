@@ -38,6 +38,11 @@ from transformers.trainer_utils import get_last_checkpoint
 from transformers import BitsAndBytesConfig
 
 
+# Explicitly disable tf32
+torch.backends.cuda.matmul.allow_tf32 = False
+torch.backends.cudnn.allow_tf32 = False
+
+
 logger = logging.getLogger(__name__)
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
 MODEL_TYPES = tuple(conf.model_type for conf in MODEL_CONFIG_CLASSES)
