@@ -40,10 +40,10 @@ from transformers import BitsAndBytesConfig
 
 device_index = 0
 if torch.cuda.is_available():
-        assert device_index < torch.cuda.device_count(), f"Invalid CUDA device index: {device_index}. Available devices: {torch.cuda.device_count()}"
-        device = torch.device(f"cuda:{device_index}")
-    else:
-        device = torch.device("cpu")
+    assert device_index < torch.cuda.device_count(), f"Invalid CUDA device index: {device_index}. Available devices: {torch.cuda.device_count()}"
+    device = torch.device(f"cuda:{device_index}")
+else:
+    device = torch.device("cpu")
 # Explicitly disable tf32
 torch.backends.cuda.matmul.allow_tf32 = False
 torch.backends.cudnn.allow_tf32 = False
