@@ -39,8 +39,8 @@ from transformers import BitsAndBytesConfig
 
 
 # Explicitly disable tf32
-torch.backends.cuda.matmul.allow_tf32 = False
-torch.backends.cudnn.allow_tf32 = False
+#torch.backends.cuda.matmul.allow_tf32 = False
+#torch.backends.cudnn.allow_tf32 = False
 
 
 logger = logging.getLogger(__name__)
