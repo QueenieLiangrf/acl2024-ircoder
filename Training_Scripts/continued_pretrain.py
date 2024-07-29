@@ -19,7 +19,7 @@ from datasets import load_dataset
 from peft import (
     LoraConfig,
     get_peft_model,
-    prepare_model_for_int8_training
+    prepare_model_for_kbit_training
 )
 import transformers
 from transformers import (
@@ -357,7 +357,7 @@ def main():
     elif len(tokenizer) < embedding_size:
         model_base.resize_token_embeddings(len(tokenizer))
 
-    model_base = prepare_model_for_int8_training(model_base)
+    model_base = prepare_model_for_kbit_training(model_base)
     adapter_config = LoraConfig(
         lora_alpha=model_args.lora_alpha,
         lora_dropout=model_args.lora_dropout,
