@@ -1,7 +1,7 @@
 from transformers import AutoTokenizer
 
 # Set your Hugging Face API token
-HF_API_TOKEN = "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"
+HF_API_TOKEN = "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"
 
 SAVE_MODULES_MAP = {
     "bigcode/starcoderbase-1b": [
