@@ -176,6 +176,9 @@ class DataTrainingArguments:
     dataset_config_name: Optional[str] = field(
         default=None, metadata={"help": "The configuration name of the dataset to use (via the datasets library)."}
     )
+    split: Optional[str] = field(
+        default=None, metadata={"help": "The configuration name of the dataset to use Size_Optimized or Perform_Optimized."}
+    )
     max_train_samples: Optional[int] = field(
         default=None,
         metadata={
@@ -466,13 +469,4 @@ def main():
 
 
 if __name__ == "__main__":
-    device_index = 0
-    if torch.cuda.is_available():
-        assert device_index < torch.cuda.device_count(), f"Invalid CUDA device index: {device_index}. Available devices: {torch.cuda.device_count()}"
-        device = torch.device(f"cuda:{device_index}")
-    else:
-        device = torch.device("cpu")
-    # Explicitly disable tf32
-    torch.backends.cuda.matmul.allow_tf32 = False
-    torch.backends.cudnn.allow_tf32 = False
     main()
