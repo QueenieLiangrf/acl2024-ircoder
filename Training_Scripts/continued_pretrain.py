@@ -37,6 +37,9 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from transformers import BitsAndBytesConfig
 
+# Set multiprocessing start method to 'spawn'
+multiprocessing.set_start_method('spawn', force=True)
+
 
 logger = logging.getLogger(__name__)
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
