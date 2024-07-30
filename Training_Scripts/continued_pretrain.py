@@ -62,7 +62,7 @@ class ModelArguments:
     """
     Arguments pertaining to which model/config/tokenizer we are going to fine-tune, or train from scratch.
     """
-
+    # add fields
     model_name_or_path: Optional[str] = field(
         default=None,
         metadata={
