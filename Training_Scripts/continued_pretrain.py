@@ -429,6 +429,7 @@ def main():
         preprocess_logits_for_metrics=preprocess_logits_for_metrics
         if training_args.do_eval and not is_torch_tpu_available()
         else None,
+        remove_unused_columns=False
     )
 
     # Training
