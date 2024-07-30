@@ -1,3 +1,4 @@
+import multiprocessing
 import logging
 import math
 import os
@@ -39,7 +40,6 @@ from transformers import BitsAndBytesConfig
 
 # Set multiprocessing start method to 'spawn'
 multiprocessing.set_start_method('spawn', force=True)
-
 
 logger = logging.getLogger(__name__)
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
@@ -231,7 +231,7 @@ def main():
 
     # Setup logging
     logging.basicConfig(
-        format="%(asctime)s - %(levelname)s - %(name)s - %(message)s",
+        format="%(asctime)s - %(levellevel})}, "evel": %(name)s - %(message)s",
         datefmt="%m/%d/%Y %H:%M:%S",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
