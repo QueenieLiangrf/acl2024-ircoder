@@ -284,14 +284,16 @@ def main():
         raw_datasets["validation"] = load_dataset(
             data_args.dataset_name,
             data_args.dataset_config_name,
-            split=f"train[:{data_args.validation_split_percentage}%]",
+            #split=f"train[:{data_args.validation_split_percentage}%]",
+            split=data_args.split
             cache_dir=model_args.cache_dir,
             token=model_args.token
         )
         raw_datasets["train"] = load_dataset(
             data_args.dataset_name,
             data_args.dataset_config_name,
-            split=f"train[{data_args.validation_split_percentage}%:]",
+            #split=f"train[{data_args.validation_split_percentage}%:]",
+            split=data_args.split
             cache_dir=model_args.cache_dir,
             token=model_args.token
         )    
