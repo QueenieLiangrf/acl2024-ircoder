@@ -296,8 +296,8 @@ def main():
 
         # Define the feature schema
         featuresmodi = Features({
-            'train': Value(dtype='string'),
-            'validation': Value(dtype='string')
+            'Source_Code': Value(dtype='string'),
+            'IR_Original': Value(dtype='string')
         })
 
         # # Example data
@@ -320,9 +320,8 @@ def main():
 
         # Create DatasetDict
         dataset_dict = DatasetDict({
-            'train': Dataset.from_dict(train_data),
-            'validation': Dataset.from_dict(validation_data),
-            features=featuresmodi
+            'train': Dataset.from_dict(train_data, features=featuresmodi),
+            'validation': Dataset.from_dict(validation_data, features=featuresmodi)
         })
 
 
@@ -331,7 +330,7 @@ def main():
 
         tokenized_datasets = dataset_dict
         
-    tokenized_datasets = raw_datasets
+    #tokenized_datasets = raw_datasets
 
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
@@ -410,7 +409,7 @@ def main():
     model = get_peft_model(model_base, adapter_config)
 
     if training_args.do_train:
-        if "train" not in tokenized_datasets.features:
+        if "train" not in tokenized_datasets.keys():
             raise ValueError("--do_train requires a train dataset")
         train_dataset = tokenized_datasets["train"]
         if data_args.max_train_samples is not None:
@@ -418,7 +417,7 @@ def main():
             train_dataset = train_dataset.select(range(max_train_samples))
 
     if training_args.do_eval:
-        if "validation" not in tokenized_datasets.features:
+        if "validation" not in tokenized_datasets.keys():
             raise ValueError("--do_eval requires a validation dataset")
         eval_dataset = tokenized_datasets["validation"]
         if data_args.max_eval_samples is not None:
