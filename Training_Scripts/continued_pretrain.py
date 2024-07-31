@@ -290,7 +290,7 @@ def main():
         length_dataset = len(shuffled_dataset)
         num_samples = length_dataset // 10 * 2
         train_samples = shuffled_dataset.select(range(num_samples))
-        vali_samples = shuffled_dataset.select(range(num_samples, length_dataset))
+        val_samples = shuffled_dataset.select(range(num_samples, length_dataset))
         
         from datasets import Dataset, Features, Value
 
@@ -300,20 +300,36 @@ def main():
             'validation': Value(dtype='string')
         })
 
-        # Example data
-        datamodi = {
-            'train': ["print('Hello, world!')", "def add(a, b): return a + b"],
-            'validation': ["IR code for print", "IR code for add function"]
+        # # Example data
+        # datamodi = {
+        #     'train': ["print('Hello, world!')", "def add(a, b): return a + b"],
+        #     'validation': ["IR code for print", "IR code for add function"]
+        # }
+
+        # datamodi['train'].extend(train_samples)
+        # datamodi['validation'].extend(vali_samples)
+
+        train_data = {
+            'Source_Code': train_samples['Source_Code'],
+            'IR_Original': train_samples['IR_Original']
+        }
+        validation_data = {
+            'Source_Code': val_samples['Source_Code'],
+            'IR_Original': val_samples['IR_Original']
         }
 
-        datamodi['train'].extend(train_samples)
-        datamodi['validation'].extend(vali_samples)
+        # Create DatasetDict
+        dataset_dict = DatasetDict({
+            'train': Dataset.from_dict(train_data),
+            'validation': Dataset.from_dict(validation_data),
+            features=featuresmodi
+        })
 
 
         # Create the dataset
-        datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
+        #datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
 
-        tokenized_datasets = datasetmodi
+        tokenized_datasets = dataset_dict
         
     tokenized_datasets = raw_datasets
 
