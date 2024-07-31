@@ -1,4 +1,3 @@
-import multiprocessing
 import logging
 import math
 import os
@@ -38,8 +37,6 @@ from transformers import (
 from transformers.trainer_utils import get_last_checkpoint
 from transformers import BitsAndBytesConfig
 
-# Set multiprocessing start method to 'spawn'
-multiprocessing.set_start_method('spawn', force=True)
 
 logger = logging.getLogger(__name__)
 MODEL_CONFIG_CLASSES = list(MODEL_FOR_CAUSAL_LM_MAPPING.keys())
@@ -228,6 +225,7 @@ def main():
         load_in_8bit=True,
         llm_int8_threshold=model_args.llm_int8_threshold
     )
+    
 
     # Setup logging
     logging.basicConfig(
@@ -281,6 +279,7 @@ def main():
     raw_datasets = load_dataset(
         data_args.dataset_name,
         data_args.dataset_config_name,
+        data_args.split
         cache_dir=model_args.cache_dir,
         token=model_args.token
     )
