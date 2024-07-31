@@ -292,7 +292,7 @@ def main():
         train_samples = shuffled_dataset.select(range(num_samples))
         val_samples = shuffled_dataset.select(range(num_samples, length_dataset))
         
-        from datasets import Dataset, Features, Value
+        from datasets import Dataset, Features, Value, DatasetDict
 
         # Define the feature schema
         featuresmodi = Features({
