@@ -284,11 +284,12 @@ def main():
         token=model_args.token
     )
     if "validation" not in raw_datasets.features:
-        datasets = {}
-        datasets["validation"] = raw_datasets[:3053]
-        datasets["train"] = raw_datasets[3053:]
+        datadict = {}
+        datadict["validation"] = raw_datasets[:3053]
+        datadict["train"] = raw_datasets[3053:]
+        tokenized_datasets = datadict
         
-    tokenized_datasets = datasets
+    tokenized_datasets = raw_datasets
 
     config_kwargs = {
         "cache_dir": model_args.cache_dir,
