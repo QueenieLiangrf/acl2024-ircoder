@@ -284,10 +284,36 @@ def main():
         token=model_args.token
     )
     if "validation" not in raw_datasets.features:
-        datadict = {}
-        datadict["validation"] = raw_datasets[:3053]
-        datadict["train"] = raw_datasets[3053:]
-        tokenized_datasets = datadict
+        shuffled_dataset = raw_datasets.shuffle(seed=42)
+
+        # Select a random subset of samples (e.g., 5 samples)
+        length_dataset = len(shuffled_dataset)
+        num_samples = length_dataset // 10 * 2
+        train_samples = shuffled_dataset.select(range(num_samples))
+        vali_samples = shuffled_dataset.select(range(num_samples, length_dataset))
+        
+        from datasets import Dataset, Features, Value
+
+        # Define the feature schema
+        featuresmodi = Features({
+            'train': Value(dtype='string'),
+            'validation': Value(dtype='string')
+        })
+
+        # Example data
+        datamodi = {
+            'train': ["print('Hello, world!')", "def add(a, b): return a + b"],
+            'validation': ["IR code for print", "IR code for add function"]
+        }
+
+        datamodi['train'].extend(train_samples)
+        datamodi['validation'].extend(vali_samples)
+
+
+        # Create the dataset
+        datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
+
+        tokenized_datasets = datasetmodi
         
     tokenized_datasets = raw_datasets
 
@@ -368,7 +394,7 @@ def main():
     model = get_peft_model(model_base, adapter_config)
 
     if training_args.do_train:
-        if "train" not in tokenized_datasets:
+        if "train" not in tokenized_datasets.features:
             raise ValueError("--do_train requires a train dataset")
         train_dataset = tokenized_datasets["train"]
         if data_args.max_train_samples is not None:
@@ -376,7 +402,7 @@ def main():
             train_dataset = train_dataset.select(range(max_train_samples))
 
     if training_args.do_eval:
-        if "validation" not in tokenized_datasets:
+        if "validation" not in tokenized_datasets.features:
             raise ValueError("--do_eval requires a validation dataset")
         eval_dataset = tokenized_datasets["validation"]
         if data_args.max_eval_samples is not None:
