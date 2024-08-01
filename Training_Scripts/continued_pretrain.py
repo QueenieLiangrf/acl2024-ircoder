@@ -332,7 +332,7 @@ def main():
             'train': Dataset.from_dict(train_data, features=featuresmodi),
             'validation': Dataset.from_dict(validation_data, features=featuresmodi)
         })
-
+        print(1212121212)
 
         # Create the dataset
         #datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
