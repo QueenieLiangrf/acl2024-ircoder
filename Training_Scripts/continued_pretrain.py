@@ -287,13 +287,13 @@ def main():
         token=model_args.token
     )
     if "validation" not in raw_datasets.features:
-        shuffled_dataset = raw_datasets.shuffle(seed=42)
+        #shuffled_dataset = raw_datasets.shuffle(seed=42)
 
         # Select a random subset of samples (e.g., 5 samples)
-        length_dataset = len(shuffled_dataset)
+        length_dataset = len(raw_datasets)
         num_samples = length_dataset // 10 * 2
-        train_samples = shuffled_dataset.select(range(num_samples))
-        val_samples = shuffled_dataset.select(range(num_samples, length_dataset))
+        train_samples = raw_datasets.select(range(num_samples))
+        val_samples = raw_datasets.select(range(num_samples, length_dataset))
         
         from datasets import Dataset, Features, Value, DatasetDict
 
