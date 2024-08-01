@@ -292,8 +292,11 @@ def main():
 
         # Select a random subset of samples (e.g., 5 samples)
         length_dataset = len(raw_datasets)
+        print(66666666)
         num_samples = length_dataset // 10 * 2
+        print(77777777)
         train_samples = raw_datasets.select(range(num_samples))
+        print(88888888)
         val_samples = raw_datasets.select(range(num_samples, length_dataset))
         
         from datasets import Dataset, Features, Value, DatasetDict
@@ -312,11 +315,12 @@ def main():
 
         # datamodi['train'].extend(train_samples)
         # datamodi['validation'].extend(vali_samples)
-
+        print(9999999)
         train_data = {
             'Source_Code': train_samples['Source_Code'],
             'IR_Original': train_samples['IR_Original']
         }
+         print(1010000)
         validation_data = {
             'Source_Code': val_samples['Source_Code'],
             'IR_Original': val_samples['IR_Original']
