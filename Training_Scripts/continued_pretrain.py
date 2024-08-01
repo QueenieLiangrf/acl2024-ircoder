@@ -291,6 +291,7 @@ def main():
         #shuffled_dataset = raw_datasets.shuffle(seed=42)
 
         # Select a random subset of samples (e.g., 5 samples)
+        print(00000000)
         length_dataset = len(raw_datasets)
         print(66666666)
         num_samples = length_dataset // 10 * 2
