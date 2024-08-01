@@ -288,7 +288,7 @@ def main():
     )
     print(55555555)
     if "validation" not in raw_datasets.features:
-        #shuffled_dataset = raw_datasets.shuffle(seed=42)
+        shuffled_dataset = raw_datasets.shuffle(seed=42)
 
         # Select a random subset of samples (e.g., 5 samples)
         print(00000000)
@@ -317,27 +317,30 @@ def main():
         # datamodi['train'].extend(train_samples)
         # datamodi['validation'].extend(vali_samples)
         print(9999999)
-        train_data = {
+        train_dataset = {
             'Source_Code': train_samples['Source_Code'],
             'IR_Original': train_samples['IR_Original']
         }
         print(1010000)
-        validation_data = {
+        eval_dataset = {
             'Source_Code': val_samples['Source_Code'],
             'IR_Original': val_samples['IR_Original']
         }
 
         # Create DatasetDict
-        dataset_dict = DatasetDict({
-            'train': Dataset.from_dict(train_data, features=featuresmodi),
-            'validation': Dataset.from_dict(validation_data, features=featuresmodi)
-        })
+        #train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+
+        # dataset_dict = DatasetDict({
+        #     'train': Dataset.from_dict(train_data, features=featuresmodi),
+        #     'validation': Dataset.from_dict(validation_data, features=featuresmodi)
+        # })
+        
         print(1212121212)
 
         # Create the dataset
         #datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
 
-        tokenized_datasets = dataset_dict
+        #tokenized_datasets = dataset_dict
         
     #tokenized_datasets = raw_datasets
 
@@ -417,21 +420,21 @@ def main():
     )
     model = get_peft_model(model_base, adapter_config)
 
-    if training_args.do_train:
-        if "train" not in tokenized_datasets.keys():
-            raise ValueError("--do_train requires a train dataset")
-        train_dataset = tokenized_datasets["train"]
-        if data_args.max_train_samples is not None:
-            max_train_samples = min(len(train_dataset), data_args.max_train_samples)
-            train_dataset = train_dataset.select(range(max_train_samples))
+    # if training_args.do_train:
+    #     if "train" not in tokenized_datasets.keys():
+    #         raise ValueError("--do_train requires a train dataset")
+    #     train_dataset = tokenized_datasets["train"]
+    #     if data_args.max_train_samples is not None:
+    #         max_train_samples = min(len(train_dataset), data_args.max_train_samples)
+    #         train_dataset = train_dataset.select(range(max_train_samples))
 
-    if training_args.do_eval:
-        if "validation" not in tokenized_datasets.keys():
-            raise ValueError("--do_eval requires a validation dataset")
-        eval_dataset = tokenized_datasets["validation"]
-        if data_args.max_eval_samples is not None:
-            max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)
-            eval_dataset = eval_dataset.select(range(max_eval_samples))
+    # if training_args.do_eval:
+    #     if "validation" not in tokenized_datasets.keys():
+    #         raise ValueError("--do_eval requires a validation dataset")
+    #     eval_dataset = tokenized_datasets["validation"]
+    #     if data_args.max_eval_samples is not None:
+    #         max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)
+    #         eval_dataset = eval_dataset.select(range(max_eval_samples))
 
         def preprocess_logits_for_metrics(logits, labels):
             if isinstance(logits, tuple):
