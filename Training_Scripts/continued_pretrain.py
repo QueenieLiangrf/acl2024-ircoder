@@ -466,7 +466,7 @@ def main():
         if training_args.do_eval and not is_torch_tpu_available()
         else None
     )
-
+    print(1111111)
     # Training
     if training_args.do_train:
         checkpoint = None
@@ -474,7 +474,9 @@ def main():
             checkpoint = training_args.resume_from_checkpoint
         elif last_checkpoint is not None:
             checkpoint = last_checkpoint
+        print(2222222)
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        print(3333333)
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics
