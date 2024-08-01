@@ -278,7 +278,7 @@ def main():
 
     # Set seed before initializing model.
     set_seed(training_args.seed)
-
+    print(44444444)
     raw_datasets = load_dataset(
         data_args.dataset_name,
         data_args.dataset_config_name,
@@ -286,6 +286,7 @@ def main():
         cache_dir=model_args.cache_dir,
         token=model_args.token
     )
+    print(55555555)
     if "validation" not in raw_datasets.features:
         #shuffled_dataset = raw_datasets.shuffle(seed=42)
 
