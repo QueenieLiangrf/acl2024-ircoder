@@ -323,6 +323,8 @@ def main():
 #         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
+            if model_args.model_name_or_path:
+                tokenizer = TOKENIZER_MAP[model_args.model_name_or_path]
             inputs = tokenizer(
                 examples['Source_Code'],  # This is the key part where 'question' is specified
                 #truncation=True,
