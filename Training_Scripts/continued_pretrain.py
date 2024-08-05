@@ -278,7 +278,7 @@ def main():
 
     # Set seed before initializing model.
     set_seed(training_args.seed)
-
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
     raw_datasets = load_dataset(
         data_args.dataset_name,
         data_args.dataset_config_name,
