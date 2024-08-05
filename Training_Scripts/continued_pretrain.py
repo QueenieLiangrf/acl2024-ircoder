@@ -293,44 +293,44 @@ def main():
         length_dataset = len(shuffled_dataset)
         num_samples = length_dataset // 10 * 8
         train_samples = shuffled_dataset.select(range(num_samples))
-        val_samples = shuffled_dataset.select(range(num_samples, length_dataset))
+        eval_samples = shuffled_dataset.select(range(num_samples, length_dataset))
         
-        from datasets import Dataset, Features, Value, DatasetDict
+#         from datasets import Dataset, Features, Value, DatasetDict
         
-        # Define the feature schema
-        featuresmodi = Features({
-            'input_ids': Value(dtype='string'),
-            'labels': Value(dtype='string')
-        })
+#         # Define the feature schema
+#         featuresmodi = Features({
+#             'input_ids': Value(dtype='string'),
+#             'labels': Value(dtype='string')
+#         })
         
-        train_data = {
-                    'input_ids': [],
-                    'labels': []
-}
-        train_data['input_ids'].extend(train_samples['Source_Code'])
-        train_data['labels'].extend(train_samples['IR_Original'])
+#         train_data = {
+#                     'input_ids': [],
+#                     'labels': []
+# }
+#         train_data['input_ids'].extend(train_samples['Source_Code'])
+#         train_data['labels'].extend(train_samples['IR_Original'])
         
-        eval_data = {
-                    'input_ids': [],
-                    'labels': []
-        }
-        eval_data['input_ids'].extend(val_samples['Source_Code'])
-        eval_data['labels'].extend(val_samples['IR_Original'])
+#         eval_data = {
+#                     'input_ids': [],
+#                     'labels': []
+#         }
+#         eval_data['input_ids'].extend(val_samples['Source_Code'])
+#         eval_data['labels'].extend(val_samples['IR_Original'])
         
-        print(3333333)
-        train_dataset = Dataset.from_dict(train_data, features=featuresmodi)   
-        print(2222222)
-        eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
+#         print(3333333)
+#         train_dataset = Dataset.from_dict(train_data, features=featuresmodi)   
+#         print(2222222)
+#         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
             inputs = tokenizer(
-                examples['input_ids'],  # This is the key part where 'question' is specified
+                examples['Source_Code'],  # This is the key part where 'question' is specified
                 #truncation=True,
                 padding="max_length",
                 max_length=4090,
             )
             # Convert labels to tensors
-            labels = examples["labels"]
+            labels = examples["IR_Original"]
     
             # Add labels to inputs
             inputs["labels"] = labels
@@ -338,8 +338,8 @@ def main():
             return inputs
         print(444444)
         # Apply preprocessing
-        train_dataset = train_dataset.map(preprocess_function, batched=True)
-        eval_dataset = eval_dataset.map(preprocess_function, batched=True)
+        train_dataset = train_samples.map(preprocess_function, batched=True)
+        eval_dataset = eval_samples.map(preprocess_function, batched=True)
         print(55555555)
         #tokenized_datasets = dataset_dict
         
