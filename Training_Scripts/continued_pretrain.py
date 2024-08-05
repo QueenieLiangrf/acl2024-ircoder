@@ -290,10 +290,10 @@ def main():
     if "validation" not in raw_datasets.features:
         shuffled_dataset = raw_datasets.shuffle(seed=42)
         
-        length_dataset = len(dataset)
+        length_dataset = len(shuffled_dataset)
         num_samples = length_dataset // 10 * 8
-        train_samples = dataset.select(range(num_samples))
-        val_samples = dataset.select(range(num_samples, length_dataset))
+        train_samples = shuffled_dataset.select(range(num_samples))
+        val_samples = shuffled_dataset.select(range(num_samples, length_dataset))
         
         from datasets import Dataset, Features, Value, DatasetDict
         
