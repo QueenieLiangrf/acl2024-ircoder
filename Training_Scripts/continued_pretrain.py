@@ -392,24 +392,24 @@ def main():
         quantization_config=quant_config,
     )
 
-    embedding_size = model_base.get_input_embeddings().weight.shape[0]
-    logger.info(f"Loaded model's embedding size is {embedding_size}")
-    if len(tokenizer) > embedding_size:
-        logger.info(f"Extending the embedding size from {embedding_size} to {len(tokenizer)}")
-        input_embeddings = model_base.get_input_embeddings().weight.data
-        output_embeddings = model_base.get_output_embeddings().weight.data
+    # embedding_size = model_base.get_input_embeddings().weight.shape[0]
+    # logger.info(f"Loaded model's embedding size is {embedding_size}")
+    # if len(tokenizer) > embedding_size:
+    #     logger.info(f"Extending the embedding size from {embedding_size} to {len(tokenizer)}")
+    #     input_embeddings = model_base.get_input_embeddings().weight.data
+    #     output_embeddings = model_base.get_output_embeddings().weight.data
 
-        model_base.resize_token_embeddings(len(tokenizer))
+    #     model_base.resize_token_embeddings(len(tokenizer))
 
-        input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
-        output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
+    #     input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
+    #     output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
 
-        logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        input_embeddings[embedding_size:] = input_embeddings_avg
-        logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-        output_embeddings[embedding_size:] = output_embeddings_avg
-    elif len(tokenizer) < embedding_size:
-        model_base.resize_token_embeddings(len(tokenizer))
+    #     logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
+    #     input_embeddings[embedding_size:] = input_embeddings_avg
+    #     logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
+    #     output_embeddings[embedding_size:] = output_embeddings_avg
+    # elif len(tokenizer) < embedding_size:
+    #     model_base.resize_token_embeddings(len(tokenizer))
 
     model_base = prepare_model_for_kbit_training(model_base)
     adapter_config = LoraConfig(
@@ -475,7 +475,7 @@ def main():
         # Data collator will default to DataCollatorWithPadding, so we change it.
         data_collator=default_data_collator,
         compute_metrics=compute_metrics if training_args.do_eval and not is_torch_tpu_available() else None,
-        preprocess_logits_for_metrics=preprocess_logits_for_metrics
+        #preprocess_logits_for_metrics=preprocess_logits_for_metrics
         if training_args.do_eval and not is_torch_tpu_available()
         else None
     )
