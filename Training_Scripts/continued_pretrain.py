@@ -317,16 +317,17 @@ def main():
         eval_data['input_ids'].extend(val_samples['Source_Code'])
         eval_data['labels'].extend(val_samples['IR_Original'])
         
-        
+        print(3333333)
         train_dataset = Dataset.from_dict(train_data, features=featuresmodi)   
+        print(2222222)
         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
             inputs = tokenizer(
-            examples['input_ids'],  # This is the key part where 'question' is specified
-            #truncation=True,
-            padding="max_length",
-            max_length=4090,
+                examples['input_ids'],  # This is the key part where 'question' is specified
+                #truncation=True,
+                padding="max_length",
+                max_length=4090,
             )
             # Convert labels to tensors
             labels = examples["labels"]
@@ -335,11 +336,11 @@ def main():
             inputs["labels"] = labels
 
             return inputs
-
+        print(444444)
         # Apply preprocessing
         train_dataset = train_dataset.map(preprocess_function, batched=True)
         eval_dataset = eval_dataset.map(preprocess_function, batched=True)
-        
+        print(55555555)
         #tokenized_datasets = dataset_dict
         
         
