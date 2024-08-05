@@ -278,7 +278,7 @@ def main():
 
     # Set seed before initializing model.
     set_seed(training_args.seed)
-    print(44444444)
+
     raw_datasets = load_dataset(
         data_args.dataset_name,
         data_args.dataset_config_name,
@@ -286,61 +286,62 @@ def main():
         cache_dir=model_args.cache_dir,
         token=model_args.token
     )
-    print(55555555)
+
     if "validation" not in raw_datasets.features:
         shuffled_dataset = raw_datasets.shuffle(seed=42)
-
-        # Select a random subset of samples (e.g., 5 samples)
-        print(00000000)
-        length_dataset = len(raw_datasets)
-        print(66666666)
-        num_samples = length_dataset // 10 * 2
-        print(77777777)
-        train_samples = raw_datasets.select(range(num_samples))
-        print(88888888)
-        val_samples = raw_datasets.select(range(num_samples, length_dataset))
+        
+        length_dataset = len(dataset)
+        num_samples = length_dataset // 10 * 8
+        train_samples = dataset.select(range(num_samples))
+        val_samples = dataset.select(range(num_samples, length_dataset))
         
         from datasets import Dataset, Features, Value, DatasetDict
-
+        
         # Define the feature schema
         featuresmodi = Features({
-            'Source_Code': Value(dtype='string'),
-            'IR_Original': Value(dtype='string')
+            'input_ids': Value(dtype='string'),
+            'labels': Value(dtype='string')
         })
-
-        # # Example data
-        # datamodi = {
-        #     'train': ["print('Hello, world!')", "def add(a, b): return a + b"],
-        #     'validation': ["IR code for print", "IR code for add function"]
-        # }
-
-        # datamodi['train'].extend(train_samples)
-        # datamodi['validation'].extend(vali_samples)
-        print(9999999)
-        train_dataset = {
-            'Source_Code': train_samples['Source_Code'],
-            'IR_Original': train_samples['IR_Original']
-        }
-        print(1010000)
-        eval_dataset = {
-            'Source_Code': val_samples['Source_Code'],
-            'IR_Original': val_samples['IR_Original']
-        }
-
-        # Create DatasetDict
-        #train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
-
-        # dataset_dict = DatasetDict({
-        #     'train': Dataset.from_dict(train_data, features=featuresmodi),
-        #     'validation': Dataset.from_dict(validation_data, features=featuresmodi)
-        # })
         
-        print(1212121212)
+        train_data = {
+                    'input_ids': [],
+                    'labels': []
+}
+        train_data['input_ids'].extend(train_samples['Source_Code'])
+        train_data['labels'].extend(train_samples['IR_Original'])
+        
+        eval_data = {
+                    'input_ids': [],
+                    'labels': []
+        }
+        eval_data['input_ids'].extend(val_samples['Source_Code'])
+        eval_data['labels'].extend(val_samples['IR_Original'])
+        
+        
+        train_dataset = Dataset.from_dict(train_data, features=featuresmodi)   
+        eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
-        # Create the dataset
-        #datasetmodi = Dataset.from_dict(datamodi, features=featuresmodi)
+        def preprocess_function(examples):
+            inputs = tokenizer(
+            examples['input_ids'],  # This is the key part where 'question' is specified
+            #truncation=True,
+            padding="max_length",
+            max_length=4090,
+            )
+            # Convert labels to tensors
+            labels = examples["labels"]
+    
+            # Add labels to inputs
+            inputs["labels"] = labels
 
+            return inputs
+
+        # Apply preprocessing
+        train_dataset = train_dataset.map(preprocess_function, batched=True)
+        eval_dataset = eval_dataset.map(preprocess_function, batched=True)
+        
         #tokenized_datasets = dataset_dict
+        
         
     #tokenized_datasets = raw_datasets
 
@@ -475,7 +476,7 @@ def main():
         if training_args.do_eval and not is_torch_tpu_available()
         else None
     )
-    print(1111111)
+
     # Training
     if training_args.do_train:
         checkpoint = None
@@ -483,9 +484,9 @@ def main():
             checkpoint = training_args.resume_from_checkpoint
         elif last_checkpoint is not None:
             checkpoint = last_checkpoint
-        print(2222222)
+   
         train_result = trainer.train(resume_from_checkpoint=checkpoint)
-        print(3333333)
+
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics
