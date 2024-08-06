@@ -288,12 +288,14 @@ def main():
     )
 
     if "validation" not in raw_datasets.features:
-        shuffled_dataset = raw_datasets.shuffle(seed=42)
+        split_datasets = raw_datasets.train_test_split(train_size=0.9, seed=20)
+        split_datasets["validation"] = split_datasets.pop("test")
+        # shuffled_dataset = raw_datasets.shuffle(seed=42)
         
-        length_dataset = len(shuffled_dataset)
-        num_samples = length_dataset // 10 * 8
-        train_samples = shuffled_dataset.select(range(num_samples))
-        eval_samples = shuffled_dataset.select(range(num_samples, length_dataset))
+        # length_dataset = len(shuffled_dataset)
+        # num_samples = length_dataset // 10 * 8
+        # train_samples = shuffled_dataset.select(range(num_samples))
+        # eval_samples = shuffled_dataset.select(range(num_samples, length_dataset))
         
 #         from datasets import Dataset, Features, Value, DatasetDict
         
@@ -323,25 +325,17 @@ def main():
 #         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
-            if model_args.model_name_or_path:
-                tokenizer = TOKENIZER_MAP[model_args.model_name_or_path]
-            inputs = tokenizer(
-                examples['Source_Code'],  # This is the key part where 'question' is specified
-                #truncation=True,
-                padding="max_length",
-                max_length=4090,
+            inputs = [ex["Source_Code"] for ex in examples]
+            targets = [ex["IR_Original"] for ex in examples]
+            model_inputs = tokenizer(
+                inputs, text_target=targets, truncation=True
             )
-            # Convert labels to tensors
-            labels = examples["IR_Original"]
-    
-            # Add labels to inputs
-            inputs["label"] = labels
+            return model_inputs
 
-            return inputs
      
         # Apply preprocessing
-        train_dataset = train_samples.map(preprocess_function, batched=True, remove_columns=train_samples.column_names)
-        eval_dataset = eval_samples.map(preprocess_function, batched=True, remove_columns=eval_samples.column_names)
+        train_dataset = split_datasets["train"].map(preprocess_function, batched=True, remove_columns=split_datasets["train"].column_names)
+        eval_dataset = split_datasets["validation"].map(preprocess_function, batched=True, remove_columns=split_datasets["validation"].column_names)
      
         #tokenized_datasets = dataset_dict
         
@@ -392,24 +386,24 @@ def main():
         quantization_config=quant_config,
     )
 
-    # embedding_size = model_base.get_input_embeddings().weight.shape[0]
-    # logger.info(f"Loaded model's embedding size is {embedding_size}")
-    # if len(tokenizer) > embedding_size:
-    #     logger.info(f"Extending the embedding size from {embedding_size} to {len(tokenizer)}")
-    #     input_embeddings = model_base.get_input_embeddings().weight.data
-    #     output_embeddings = model_base.get_output_embeddings().weight.data
+    embedding_size = model_base.get_input_embeddings().weight.shape[0]
+    logger.info(f"Loaded model's embedding size is {embedding_size}")
+    if len(tokenizer) > embedding_size:
+        logger.info(f"Extending the embedding size from {embedding_size} to {len(tokenizer)}")
+        input_embeddings = model_base.get_input_embeddings().weight.data
+        output_embeddings = model_base.get_output_embeddings().weight.data
 
-    #     model_base.resize_token_embeddings(len(tokenizer))
+        model_base.resize_token_embeddings(len(tokenizer))
 
-    #     input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
-    #     output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
+        input_embeddings_avg = input_embeddings[:embedding_size].mean(dim=0, keepdim=True)
+        output_embeddings_avg = output_embeddings[:embedding_size].mean(dim=0, keepdim=True)
 
-    #     logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-    #     input_embeddings[embedding_size:] = input_embeddings_avg
-    #     logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
-    #     output_embeddings[embedding_size:] = output_embeddings_avg
-    # elif len(tokenizer) < embedding_size:
-    #     model_base.resize_token_embeddings(len(tokenizer))
+        logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
+        input_embeddings[embedding_size:] = input_embeddings_avg
+        logger.info(f"Setting the newly added input embedding tokens to {input_embeddings_avg}")
+        output_embeddings[embedding_size:] = output_embeddings_avg
+    elif len(tokenizer) < embedding_size:
+        model_base.resize_token_embeddings(len(tokenizer))
 
     model_base = prepare_model_for_kbit_training(model_base)
     adapter_config = LoraConfig(
