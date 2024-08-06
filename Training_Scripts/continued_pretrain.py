@@ -340,8 +340,8 @@ def main():
             return inputs
      
         # Apply preprocessing
-        train_dataset = train_samples.map(preprocess_function, batched=True, , remove_columns=train_samples.column_names)
-        eval_dataset = eval_samples.map(preprocess_function, batched=True, , remove_columns=eval_samples.column_names)
+        train_dataset = train_samples.map(preprocess_function, batched=True, remove_columns=train_samples.column_names)
+        eval_dataset = eval_samples.map(preprocess_function, batched=True, remove_columns=eval_samples.column_names)
      
         #tokenized_datasets = dataset_dict
         
