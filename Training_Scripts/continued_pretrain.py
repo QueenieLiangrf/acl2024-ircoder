@@ -338,11 +338,11 @@ def main():
             inputs["labels"] = labels
 
             return inputs
-        print(444444)
+     
         # Apply preprocessing
-        train_dataset = train_samples.map(preprocess_function, batched=True)
-        eval_dataset = eval_samples.map(preprocess_function, batched=True)
-        print(55555555)
+        train_dataset = train_samples.map(preprocess_function, batched=True, , remove_columns=train_samples.column_names)
+        eval_dataset = eval_samples.map(preprocess_function, batched=True, , remove_columns=eval_samples.column_names)
+     
         #tokenized_datasets = dataset_dict
         
         
@@ -475,9 +475,9 @@ def main():
         # Data collator will default to DataCollatorWithPadding, so we change it.
         data_collator=default_data_collator,
         compute_metrics=compute_metrics if training_args.do_eval and not is_torch_tpu_available() else None,
-        #preprocess_logits_for_metrics=preprocess_logits_for_metrics
-        #if training_args.do_eval and not is_torch_tpu_available()
-        #else None
+        preprocess_logits_for_metrics=preprocess_logits_for_metrics
+        if training_args.do_eval and not is_torch_tpu_available()
+        else None
     )
 
     # Training
