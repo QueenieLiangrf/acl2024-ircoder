@@ -288,7 +288,7 @@ def main():
     )
 
     if "validation" not in raw_datasets.features:
-        split_datasets = raw_datasets.train_test_split(train_size=0.9, seed=20)
+        split_datasets = raw_datasets.train_test_split(test_size=f"{data_args.validation_split_percentage}%", seed=20)
         split_datasets["validation"] = split_datasets.pop("test")
         # shuffled_dataset = raw_datasets.shuffle(seed=42)
         
@@ -325,17 +325,24 @@ def main():
 #         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
-            #inputs = [ex["Source_Code"] for ex in examples]
-            #targets = [ex["IR_Original"] for ex in examples]
+            inputs = [ex for ex in examples["Source_Code"]]
+            targets = [ex for ex in examples["IR_Original"]]
             model_inputs = tokenizer(
-                examples['Source_Code'], text_target=examples['IR_Original'], truncation=True
+                inputs, text_target=targets, truncation=True
             )
             return model_inputs
+            
+        tokenized_datasets = split_datasets.map(
+            preprocess_function,
+            batched=True,
+            remove_columns=split_datasets["train"].column_names,
+        )
+     
 
      
         # Apply preprocessing
-        train_dataset = split_datasets["train"].map(preprocess_function, batched=True, remove_columns=split_datasets["train"].column_names)
-        eval_dataset = split_datasets["validation"].map(preprocess_function, batched=True, remove_columns=split_datasets["validation"].column_names)
+        #train_dataset = split_datasets["train"].map(preprocess_function, batched=True, remove_columns=split_datasets["train"].column_names)
+        #eval_dataset = split_datasets["validation"].map(preprocess_function, batched=True, remove_columns=split_datasets["validation"].column_names)
      
         #tokenized_datasets = dataset_dict
         
@@ -418,21 +425,21 @@ def main():
     )
     model = get_peft_model(model_base, adapter_config)
 
-    # if training_args.do_train:
-    #     if "train" not in tokenized_datasets.keys():
-    #         raise ValueError("--do_train requires a train dataset")
-    #     train_dataset = tokenized_datasets["train"]
-    #     if data_args.max_train_samples is not None:
-    #         max_train_samples = min(len(train_dataset), data_args.max_train_samples)
-    #         train_dataset = train_dataset.select(range(max_train_samples))
+    if training_args.do_train:
+        if "train" not in tokenized_datasets.keys():
+            raise ValueError("--do_train requires a train dataset")
+        train_dataset = tokenized_datasets["train"]
+        if data_args.max_train_samples is not None:
+            max_train_samples = min(len(train_dataset), data_args.max_train_samples)
+            train_dataset = train_dataset.select(range(max_train_samples))
 
-    # if training_args.do_eval:
-    #     if "validation" not in tokenized_datasets.keys():
-    #         raise ValueError("--do_eval requires a validation dataset")
-    #     eval_dataset = tokenized_datasets["validation"]
-    #     if data_args.max_eval_samples is not None:
-    #         max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)
-    #         eval_dataset = eval_dataset.select(range(max_eval_samples))
+    if training_args.do_eval:
+        if "validation" not in tokenized_datasets.keys():
+            raise ValueError("--do_eval requires a validation dataset")
+        eval_dataset = tokenized_datasets["validation"]
+        if data_args.max_eval_samples is not None:
+            max_eval_samples = min(len(eval_dataset), data_args.max_eval_samples)
+            eval_dataset = eval_dataset.select(range(max_eval_samples))
 
     def preprocess_logits_for_metrics(logits, labels):
         if isinstance(logits, tuple):
