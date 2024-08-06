@@ -476,8 +476,8 @@ def main():
         data_collator=default_data_collator,
         compute_metrics=compute_metrics if training_args.do_eval and not is_torch_tpu_available() else None,
         #preprocess_logits_for_metrics=preprocess_logits_for_metrics
-        if training_args.do_eval and not is_torch_tpu_available()
-        else None
+        #if training_args.do_eval and not is_torch_tpu_available()
+        #else None
     )
 
     # Training
