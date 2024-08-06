@@ -288,7 +288,7 @@ def main():
     )
 
     if "validation" not in raw_datasets.features:
-        split_datasets = raw_datasets.train_test_split(test_size=f"{data_args.validation_split_percentage}%", seed=20)
+        split_datasets = raw_datasets.train_test_split(test_size=data_args.validation_split_percentage*0.01, seed=20)
         split_datasets["validation"] = split_datasets.pop("test")
         # shuffled_dataset = raw_datasets.shuffle(seed=42)
         
