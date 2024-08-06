@@ -335,7 +335,7 @@ def main():
             labels = examples["IR_Original"]
     
             # Add labels to inputs
-            inputs["labels"] = labels
+            inputs["label"] = labels
 
             return inputs
      
