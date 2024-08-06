@@ -325,10 +325,10 @@ def main():
 #         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
 
         def preprocess_function(examples):
-            inputs = [ex["Source_Code"] for ex in examples]
-            targets = [ex["IR_Original"] for ex in examples]
+            #inputs = [ex["Source_Code"] for ex in examples]
+            #targets = [ex["IR_Original"] for ex in examples]
             model_inputs = tokenizer(
-                inputs, text_target=targets, truncation=True
+                examples['Source_Code'], text_target=examples['IR_Original'], truncation=True
             )
             return model_inputs
 
