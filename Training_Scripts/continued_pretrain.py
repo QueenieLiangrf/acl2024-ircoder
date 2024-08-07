@@ -334,7 +334,7 @@ def main():
         inputs = [ex for ex in examples["Source_Code"]]
         targets = [ex for ex in examples["IR_Original"]]
         model_inputs = tokenizer(
-            inputs, text_target=targets, truncation=True
+            inputs, text_target=targets, max_length=4096, truncation=True
         )
         return model_inputs
             
