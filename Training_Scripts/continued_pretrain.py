@@ -323,28 +323,34 @@ def main():
 #         train_dataset = Dataset.from_dict(train_data, features=featuresmodi)   
 #         print(2222222)
 #         eval_dataset = Dataset.from_dict(eval_data, features=featuresmodi)   
-
-        def preprocess_function(examples):
-            if model_args.model_name_or_path:
-                tokenizer = TOKENIZER_MAP[model_args.model_name_or_path]
-            else:
-                raise ValueError(
-                    "You are instantiating a new tokenizer from scratch. This is not supported by this script. "
-                    "You can do it from another script, save it, and load it from here, using --tokenizer_name."
-                )
-            inputs = [ex for ex in examples["Source_Code"]]
-            targets = [ex for ex in examples["IR_Original"]]
-            model_inputs = tokenizer(
-                inputs, text_target=targets, truncation=True
+    def preprocess_function(examples):
+        if model_args.model_name_or_path:
+            tokenizer = TOKENIZER_MAP[model_args.model_name_or_path]
+        else:
+            raise ValueError(
+                "You are instantiating a new tokenizer from scratch. This is not supported by this script. "
+                "You can do it from another script, save it, and load it from here, using --tokenizer_name."
             )
-            return model_inputs
-            
-        tokenized_datasets = split_datasets.map(
-            preprocess_function,
-            batched=True,
-            remove_columns=split_datasets["train"].column_names,
+        inputs = [ex for ex in examples["Source_Code"]]
+        targets = [ex for ex in examples["IR_Original"]]
+        model_inputs = tokenizer(
+            inputs, text_target=targets, truncation=True
         )
-     
+        return model_inputs
+            
+    train_dataset = split_datasets["train"].map(
+        preprocess_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=split_datasets["train"].column_names,
+        )
+    eval_dataset = split_datasets["validation"].map(
+        preprocess_function,
+        batched=True,
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=split_datasets["train"].column_names,
+        )
+ 
 
      
         # Apply preprocessing
