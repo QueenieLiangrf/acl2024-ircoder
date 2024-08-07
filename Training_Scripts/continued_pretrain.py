@@ -341,12 +341,14 @@ def main():
     train_dataset = split_datasets["train"].map(
         preprocess_function,
         batched=True,
+        batch_size=1,
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=split_datasets["train"].column_names,
         )
     eval_dataset = split_datasets["validation"].map(
         preprocess_function,
         batched=True,
+        batch_size=1,
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=split_datasets["train"].column_names,
         )
