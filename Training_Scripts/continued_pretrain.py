@@ -334,7 +334,7 @@ def main():
         inputs = [ex for ex in examples["Source_Code"]]
         targets = [ex for ex in examples["IR_Original"]]
         model_inputs = tokenizer(
-            inputs, text_target=targets, max_length=4096, truncation=True
+            inputs, text_target=targets,padding="max_length", max_length=4096, truncation=True
         )
         return model_inputs
             
@@ -464,23 +464,54 @@ def main():
         return logits.argmax(dim=-1)
 
 
+    # def compute_metrics(eval_preds):
+    #     preds, labels = eval_preds
+    #     # preds have the same shape as the labels, after the argmax(-1) has been calculated
+    #     # by preprocess_logits_for_metrics but we need to shift the labels
+    #     labels = labels[:, 1:].reshape(-1)
+    #     preds = preds[:, :-1].reshape(-1)
+    #     return {
+    #         "accuracy": float(
+    #             accuracy_score(
+    #                 labels, 
+    #                 preds, 
+    #                 normalize=True, 
+    #                 sample_weight=None
+    #             )
+    #         )
+    #     }
+    import numpy as np
+
+
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
-        # preds have the same shape as the labels, after the argmax(-1) has been calculated
-        # by preprocess_logits_for_metrics but we need to shift the labels
-        labels = labels[:, 1:].reshape(-1)
-        preds = preds[:, :-1].reshape(-1)
-        return {
-            "accuracy": float(
-                accuracy_score(
-                    labels, 
-                    preds, 
-                    normalize=True, 
-                    sample_weight=None
-                )
-            )
-        }
-
+        # In case the model returns more than the prediction logits
+        if isinstance(preds, tuple):
+            preds = preds[0]
+    
+        decoded_preds = tokenizer.batch_decode(preds, skip_special_tokens=True)
+    
+        # Replace -100s in the labels as we can't decode them
+        labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
+        decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
+    
+        # Some simple post-processing
+        decoded_preds = [pred.strip() for pred in decoded_preds]
+        decoded_labels = [[label.strip()] for label in decoded_labels]
+    
+        result = metric.compute(predictions=decoded_preds, references=decoded_labels)
+        return {"bleu": result["score"]}
+    from transformers import DataCollatorForSeq2Seq
+ 
+    # we want to ignore tokenizer pad token in the loss
+    label_pad_token_id = -100
+    # Data collator
+    data_collator = DataCollatorForSeq2Seq(
+        tokenizer,
+        model=model,
+        label_pad_token_id=label_pad_token_id,
+        pad_to_multiple_of=8
+    )
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
@@ -489,7 +520,7 @@ def main():
         eval_dataset=eval_dataset if training_args.do_eval else None,
         tokenizer=tokenizer,
         # Data collator will default to DataCollatorWithPadding, so we change it.
-        data_collator=default_data_collator,
+        data_collator=data_collator,
         compute_metrics=compute_metrics if training_args.do_eval and not is_torch_tpu_available() else None,
         preprocess_logits_for_metrics=preprocess_logits_for_metrics
         if training_args.do_eval and not is_torch_tpu_available()
