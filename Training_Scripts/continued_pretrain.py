@@ -24,6 +24,8 @@ from peft import (
     get_peft_model,
     prepare_model_for_kbit_training
 )
+from transformers import Seq2SeqTrainer
+from transformers import Seq2SeqTrainingArguments
 import transformers
 from transformers import (
     CONFIG_MAPPING,
@@ -221,7 +223,7 @@ class DataTrainingArguments:
 
 def main():
 
-    parser = HfArgumentParser((LoggingArguments, ModelArguments, DataTrainingArguments, TrainingArguments))
+    parser = HfArgumentParser((LoggingArguments, ModelArguments, DataTrainingArguments, Seq2SeqTrainingArguments))
     log_args, model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     quant_config = BitsAndBytesConfig(
@@ -513,7 +515,7 @@ def main():
         pad_to_multiple_of=8
     )
     # Initialize our Trainer
-    trainer = Trainer(
+    trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset if training_args.do_train else None,
