@@ -2,7 +2,7 @@ for lang in "d" "cpp" "go" "py" "rb" "rs" "swift"
 do
     for temperature in 0.2 0.8
     do
-        python /code-harness/main.py \
+        python /kaggle/working/ircoder97/Evaluation_Scripts/code-harness/main.py \
             --model /kaggle/input/modelgo/adapter_model.safetensors \
             --max_length_generation 1024 \
             --tasks "multiple-$lang" \
