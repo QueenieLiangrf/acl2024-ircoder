@@ -3,7 +3,7 @@ do
     for temperature in 0.2 0.8
     do
         python /kaggle/working/ircoder97/Evaluation_Scripts/code-harness/main.py \
-            --model "/kaggle/input/modelgo/adapter_model.safetensors" \
+            --model "/kaggle/input/modelgo/" \
             --max_length_generation 1024 \
             --tasks "multiple-$lang" \
             --temperature $temperature \
