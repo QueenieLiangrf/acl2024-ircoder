@@ -1,6 +1,3 @@
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1"
-
 import logging
 import math
 import os
@@ -542,7 +539,6 @@ def main():
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics
-        import os
         from huggingface_hub import HfApi
 
         # Set the token (if not already set in the environment)
