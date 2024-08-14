@@ -1,6 +1,8 @@
+
 import logging
 import math
 import os
+os.environ["HUGGINGFACE_TOKEN"] = "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"
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
@@ -540,9 +542,6 @@ def main():
 
         metrics = train_result.metrics
         from huggingface_hub import HfApi
-
-        # Set the token (if not already set in the environment)
-        os.environ["HUGGINGFACE_TOKEN"] = "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"
         # Use the token to authenticate
         api = HfApi()
         api.login(token=os.getenv("HUGGINGFACE_TOKEN"))
