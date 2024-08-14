@@ -542,8 +542,9 @@ def main():
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics
-        model_name = "QueenieFi/starcoderbase-1b-go"
+        model_name = "starcoderbase-1b-go"
         model.push_to_hub(model_name)
+        tokenizer.push_to_hub(model_name)
 
         max_train_samples = (
             data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
