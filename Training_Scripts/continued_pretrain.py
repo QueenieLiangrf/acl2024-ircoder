@@ -483,7 +483,7 @@ def main():
     #         )
     #     }
     import numpy as np
-
+    metric = evaluate.load("sacrebleu")
 
     def compute_metrics(eval_preds):
         preds, labels = eval_preds
