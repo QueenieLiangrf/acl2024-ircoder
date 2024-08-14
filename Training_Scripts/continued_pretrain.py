@@ -542,6 +542,19 @@ def main():
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics
+        import os
+        from huggingface_hub import HfApi
+
+        # Set the token (if not already set in the environment)
+        os.environ["HUGGINGFACE_TOKEN"] = "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"
+        # Use the token to authenticate
+        api = HfApi()
+        api.login(token=os.getenv("HUGGINGFACE_TOKEN"))
+
+        # Create a new repo
+        repo_id = "QueenieFi/starcoderbase-1b-go"
+        api.create_repo(repo_id=repo_id)
+
         model_name = "starcoderbase-1b-go"
         model.push_to_hub(model_name)
         tokenizer.push_to_hub(model_name)
