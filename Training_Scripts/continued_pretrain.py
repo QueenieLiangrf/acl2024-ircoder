@@ -540,19 +540,31 @@ def main():
 
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
+        from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoint
+        from peft import get_peft_model_state_dict
+        if training_args.local_rank == 0:
+            print(model.state_dict().keys())
+            if trainer.deepspeed and not os.path.exists("/kaggle/working/pytorch_model.bin"):
+                print("CONVERT Deepspeed Checkpoint to FP32")
+                state_dict = get_fp32_state_dict_from_zero_checkpoint("output") # already on cpu
+            else:
+                print("TRY to use the model directly")
+                state_dict = model.cpu().state_dict()
+            print("Number of elements in the state dict", sum(p.numel() for p in state_dict.values()))
+            d = get_peft_model_state_dict(model, state_dict=state_dict)
+
+        model.save_pretrained("output_lora")
+        torch.save(d, "output_lora/adapter_model.bin")
+
         metrics = train_result.metrics
-        from huggingface_hub import HfApi
-        # Use the token to authenticate
-        api = HfApi()
-        api.login(token=os.getenv("HUGGINGFACE_TOKEN"))
+        # from huggingface_hub import HfApi
+        # # Use the token to authenticate
+        # api = HfApi()
+        # api.login(token=os.getenv("HUGGINGFACE_TOKEN"))
 
-        # Create a new repo
-        repo_id = "QueenieFi/starcoderbase-1b-go"
-        api.create_repo(repo_id=repo_id)
-
-        model_name = "starcoderbase-1b-go"
-        model.push_to_hub(model_name)
-        tokenizer.push_to_hub(model_name)
+        # # Create a new repo
+        # repo_id = "QueenieFi/starcoderbase-1b-go-v2"
+        # api.create_repo(repo_id=repo_id)
 
         max_train_samples = (
             data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
@@ -562,6 +574,17 @@ def main():
         trainer.log_metrics("train", metrics)
         trainer.save_metrics("train", metrics)
         trainer.save_state()
+
+        from transformers import AutoModelForMaskedLM, AutoTokenizer
+
+        #checkpoint = "camembert-base"
+
+        model = AutoModelForMaskedLM.from_pretrained(checkpoint)
+        tokenizer = AutoTokenizer.from_pretrained(checkpoint)
+
+        model_name = "starcoderbase-1b-go-v2"
+        model.push_to_hub(model_name)
+        tokenizer.push_to_hub(model_name)
 
     # Evaluation
     if training_args.do_eval:
