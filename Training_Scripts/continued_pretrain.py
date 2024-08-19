@@ -540,21 +540,28 @@ def main():
 
         trainer.save_model("/kaggle/working/")  # Saves the tokenizer too for easy upload
 
+        model.save_pretrained("/kaggle/working/lora")
         from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoint
         from peft import get_peft_model_state_dict
-        if training_args.local_rank == 0:
-            print(model.state_dict().keys())
-            if trainer.deepspeed and not os.path.exists("/kaggle/working/pytorch_model.bin"):
-                print("CONVERT Deepspeed Checkpoint to FP32")
-                state_dict = get_fp32_state_dict_from_zero_checkpoint("/kaggle/working/") # already on cpu
-            else:
-                print("TRY to use the model directly")
-                state_dict = model.cpu().state_dict()
-            print("Number of elements in the state dict", sum(p.numel() for p in state_dict.values()))
-            d = get_peft_model_state_dict(model, state_dict=state_dict)
-
-        model.save_pretrained("/kaggle/working/lora")
+        state_dict = get_fp32_state_dict_from_zero_checkpoint("/kaggle/working/") # already on cpu
+        d = get_peft_model_state_dict(model, state_dict=state_dict)
         torch.save(d, "/kaggle/working/lora/adapter_model.bin")
+
+        # from deepspeed.utils.zero_to_fp32 import get_fp32_state_dict_from_zero_checkpoint
+        # from peft import get_peft_model_state_dict
+        # if training_args.local_rank == 0:
+        #     print(model.state_dict().keys())
+        #     if trainer.deepspeed and not os.path.exists("/kaggle/working/pytorch_model.bin"):
+        #         print("CONVERT Deepspeed Checkpoint to FP32")
+        #         state_dict = get_fp32_state_dict_from_zero_checkpoint("/kaggle/working/") # already on cpu
+        #     else:
+        #         print("TRY to use the model directly")
+        #         state_dict = model.cpu().state_dict()
+        #     print("Number of elements in the state dict", sum(p.numel() for p in state_dict.values()))
+        #     d = get_peft_model_state_dict(model, state_dict=state_dict)
+
+        # model.save_pretrained("/kaggle/working/lora")
+        # torch.save(d, "/kaggle/working/lora/adapter_model.bin")
 
         metrics = train_result.metrics
         # from huggingface_hub import HfApi
