@@ -16,7 +16,11 @@ def for_file(path):
     with open(path, "r") as f:
         data = json.load(f)
     n = len(data["results"])
+    # c = len(
+    #     [True for r in data["results"] if r["status"] == "OK" and r["exit_code"] == 0]
+    # )
     c = len(
-        [True for r in data["results"] if r["status"] == "OK" and r["exit_code"] == 0]
+    [True for r in data["results"] if r.get("status") == "OK" and r.get("exit_code") == 0]
     )
+
     return np.array([estimator(n, c, 1), estimator(n, c, 10), estimator(n, c, 25)])
