@@ -166,6 +166,8 @@ class GeneralMultiPLE(Task):
         # execute the problems to evaluate them
         max_workers = cpu_count() - 1 if cpu_count() > 1 else 1
         for file in tqdm(list_files):
+            print(file)
+            break
             evaluate_problem(temp_dir, file, max_workers)
 
         # compute pass@k scores
