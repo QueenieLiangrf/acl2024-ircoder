@@ -42,6 +42,7 @@ def cached_eval_script(problem, index) -> dict:
         cache_set(program, result_yaml)
         CACHE_LOCK.release()
         result_dict = eval_string_script(problem["language"], program)
+        print('result_dict', result_dict)
         for k in result_dict.keys():
             result_yaml[k] = result_dict[k]
             result_yaml["timestamp"] = int(time.time())
@@ -78,7 +79,6 @@ def evaluate_problem(
     #             "tests": reference,
     #         }
     test_results = problem.copy()
-    print('test_results1', test_results)
     del test_results["completions"]
     test_results["results"] = []
 
@@ -93,4 +93,4 @@ def evaluate_problem(
             test_results["results"].append(j)
             with open(test_results_path, "w+") as f:
                 f.write(json.dumps(test_results, indent=2))
-    print('test_results2', test_results)
+    
