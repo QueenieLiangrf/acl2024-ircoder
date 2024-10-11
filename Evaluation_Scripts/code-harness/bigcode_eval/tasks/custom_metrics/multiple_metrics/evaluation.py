@@ -70,8 +70,15 @@ def evaluate_problem(
         output_dir, problem_json_path, input_dir
     )
     test_results_path.parent.mkdir(mode=0o755, parents=True, exist_ok=True)
-
+    # problem = {
+    #             "name": prompt_name["name"],
+    #             "language": self.language,
+    #             "prompt": prompt_name["prompt"],
+    #             "completions": generation,
+    #             "tests": reference,
+    #         }
     test_results = problem.copy()
+    print('test_results1', test_results)
     del test_results["completions"]
     test_results["results"] = []
 
@@ -86,3 +93,4 @@ def evaluate_problem(
             test_results["results"].append(j)
             with open(test_results_path, "w+") as f:
                 f.write(json.dumps(test_results, indent=2))
+    print('test_results2', test_results)
