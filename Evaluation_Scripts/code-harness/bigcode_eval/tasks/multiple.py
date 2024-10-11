@@ -166,14 +166,13 @@ class GeneralMultiPLE(Task):
         # execute the problems to evaluate them
         max_workers = cpu_count() - 1 if cpu_count() > 1 else 1
         for file in tqdm(list_files):
-            print(file)
-            break
             evaluate_problem(temp_dir, file, max_workers)
 
         # compute pass@k scores
         result_array = np.array(
             [for_file(p) for p in Path(temp_dir).glob("*.results.json")]
         )
+        print('result_array', result_array)
         result = result_array.mean(axis=0)
         name = (
             temp_dir.split("/")[-1]
