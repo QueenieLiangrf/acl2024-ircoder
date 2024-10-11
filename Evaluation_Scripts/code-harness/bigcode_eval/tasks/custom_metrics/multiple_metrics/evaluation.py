@@ -42,7 +42,6 @@ def cached_eval_script(problem, index) -> dict:
         cache_set(program, result_yaml)
         CACHE_LOCK.release()
         result_dict = eval_string_script(problem["language"], program)
-        print('result_dict', result_dict)
         for k in result_dict.keys():
             result_yaml[k] = result_dict[k]
             result_yaml["timestamp"] = int(time.time())
