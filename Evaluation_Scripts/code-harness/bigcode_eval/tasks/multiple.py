@@ -169,6 +169,9 @@ class GeneralMultiPLE(Task):
             evaluate_problem(temp_dir, file, max_workers)
 
         # compute pass@k scores
+        for p in Path(temp_dir).glob("*.results.json"):
+            print('#####p', p)
+            break
         result_array = np.array(
             [for_file(p) for p in Path(temp_dir).glob("*.results.json")]
         )
