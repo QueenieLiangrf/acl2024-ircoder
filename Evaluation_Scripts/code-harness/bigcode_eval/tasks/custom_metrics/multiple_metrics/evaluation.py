@@ -92,6 +92,3 @@ def evaluate_problem(
             test_results["results"].append(j)
             with open(test_results_path, "w+") as f:
                 f.write(json.dumps(test_results, indent=2))
-            print("j", j)
-            break
-    
